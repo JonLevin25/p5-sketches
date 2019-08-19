@@ -21,22 +21,19 @@ function setup() {
   // LOG_FRAME_DELTA = 60;
 
   createCanvas(CANVAS_SIZE, CANVAS_SIZE);
+  noStroke();
+  ellipseMode(CENTER);
 }
 
 function draw() {
   FRAME_COUNTER++;
+  
+  // clear the screen
   background(120);
 
   const startRadius = 40;
-
-  ellipseMode(CENTER)
-  const steps = 100;
-
-  fill(255);
-  noStroke();
-
-  let mousePos = createVector(mouseX, mouseY);
-
+  const mousePos = createVector(mouseX, mouseY);
+  
   [
     createVector(0, 0)
     // , createVector(width, 0),
@@ -65,27 +62,25 @@ function drawTentacle(startRadius, startPos, endPos){
   let v = distVector.copy().normalize();
   for (let i = 0; i < maxSteps; i++){
     
-    /* Draw logic */
     push();
     
+    /* Draw logic */
     translate(offset.x, offset.y);
     ellipse(0, 0, radius);
-
-    fill(0);
-    text(parseInt(per) ,0, 0);
+ 
 
     pop();
 
     /* Update state */
-    let oldRadius = radius;
+    const oldRadius = radius;
 
-    let percent =  getPercent(offset);
+    const percent =  getPercent(offset);
     if (percent > 1.0) break;
     
-    let scaleFactor = 1 - percent;
+    const scaleFactor = (1 - percent);
     radius = clamp(scaleFactor * startRadius, minRadius, startRadius);
     
-    let newRadius = radius;
+    const newRadius = radius;
     let delta = (oldRadius + newRadius)/2;
     offset = V.add(offset, v.copy().mult(delta));
 
@@ -94,19 +89,8 @@ function drawTentacle(startRadius, startPos, endPos){
   }
 }
 
-// returns 1 if rot == 0, sqrt(2) if rot == 1
-function sideScaler(rot){
-  const sqrt2 = sqrt(2);
-  return rot * sqrt2 + (1 - rot);
-}
 
-var l = 0;
-function distance(x1, y1, x2, y2){
-  let res = sqrt(pow(x1-x2, 2) + Math.pow(y1-y2, 2));
-  if (++l % 12 === 0){
-    // clog(`Distance(${x1},${y1},${x2},${y2}) = ${res}`);
   }
-  return res
 }
 
 function clamp(n, min, max) {
@@ -122,15 +106,4 @@ function clog(str){
     console.log(LOG_FRAME_COUNTER); 
     console.log(str);
   }
-}
-
-
-function getAudio(){
-  fs.readFile(audioFilePath, (err, data) => {
-    if (err) {
-      throw err;
-    }
-
-    
-  });
 }
