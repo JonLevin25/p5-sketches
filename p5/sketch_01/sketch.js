@@ -32,6 +32,7 @@ function draw() {
   background(120);
 
   const startRadius = 40;
+  const maxSpread = 20;
   const mousePos = createVector(mouseX, mouseY);
   
   [
@@ -39,15 +40,15 @@ function draw() {
     // , createVector(width, 0),
     // , createVector(0, height)
     // , createVector(width, height)
-  ].forEach(v => {
-    drawTentacle(startRadius, v, mousePos, steps);
+  ].forEach(startPos => {
+    drawTentacle(startRadius, startPos, mousePos, maxSpread);
   });
 }
 
 const minRadius = 1;
 let per = 0;
 
-function drawTentacle(startRadius, startPos, endPos){
+function drawTentacle(startRadius, startPos, endPos, maxSpread){
   const maxSteps = 100;
   const distVector = V.sub(endPos, startPos);
   const totalDist = distVector.mag();
@@ -81,7 +82,11 @@ function drawTentacle(startRadius, startPos, endPos){
     radius = clamp(scaleFactor * startRadius, minRadius, startRadius);
     
     const newRadius = radius;
+    const spreadCurve = getSpreadCurve(startPos, endPos, maxSpread); // Gets the function that will calculate spread
+    
     let delta = (oldRadius + newRadius)/2;
+    delta += spreadCurve(offset);
+
     offset = V.add(offset, v.copy().mult(delta));
 
     /* Update debug vars */
@@ -89,7 +94,19 @@ function drawTentacle(startRadius, startPos, endPos){
   }
 }
 
+function getSpreadCurve(startPos, endPos, maxSpread){
+  const canvasSize = createVector(CANVAS_SIZE, CANVAS_SIZE).mag();
+  const totalDist = V.sub(endPos, startPos).mag();
 
+  if (totalDist === 0) return (currPos) => 0; // Edge case where distance is zero
+  
+  const totalPercent = totalDist / canvasSize;
+  const adjustedMaxSpread = totalPercent * maxSpread;
+
+  return function(currPos){
+    const currDist = V.sub(currPos, startPos).mag();
+    const percent = currDist / totalDist;
+    return sqrt(1 - percent) * adjustedMaxSpread;
   }
 }
 
