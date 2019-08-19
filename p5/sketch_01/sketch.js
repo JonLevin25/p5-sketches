@@ -56,7 +56,8 @@ function drawTentacle(startRadius, startPos, endPos, steps){
   
   function getPercent(currPos){
     let currVec = V.sub(currPos, startPos);
-    return (totalDist - currVec.mag()) / totalDist;
+    let currDist = currVec.mag();
+    return currDist / totalDist;
   }
 
   let offset = startPos;
@@ -69,8 +70,7 @@ function drawTentacle(startRadius, startPos, endPos, steps){
     ellipse(0, 0, radius);
 
     fill(0);
-    if (per > 75)
-      text(parseInt(per) ,0, 0);
+    text(parseInt(per) ,0, 0);
     pop();
 
     // update offset
@@ -79,11 +79,11 @@ function drawTentacle(startRadius, startPos, endPos, steps){
     // update radius
     let percent =  getPercent(offset);
     if (percent > 1.0) break;
-    per = percent * 100;
-
+    
     // linear falloff
     // let scaleFactor = percent;
-    let scaleFactor = 0.5 * percent;
+    let scaleFactor = 1 - percent;
+    per = scaleFactor * 100;
     radius = clamp(scaleFactor * startRadius, minRadius, startRadius);
   }
 }
