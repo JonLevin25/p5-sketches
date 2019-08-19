@@ -77,13 +77,17 @@ function drawTentacle(startRadius, startPos, endPos){
     pop();
 
     /* Update state */
-    offset = V.add(offset, v.copy().mult(radius));
+    let oldRadius = radius;
 
     let percent =  getPercent(offset);
     if (percent > 1.0) break;
     
     let scaleFactor = 1 - percent;
     radius = clamp(scaleFactor * startRadius, minRadius, startRadius);
+    
+    let newRadius = radius;
+    let delta = (oldRadius + newRadius)/2;
+    offset = V.add(offset, v.copy().mult(delta));
 
     /* Update debug vars */
     per = scaleFactor * 100;
