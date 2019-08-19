@@ -37,9 +37,9 @@ function draw() {
   
   [
     createVector(0, 0)
-    // , createVector(width, 0),
-    // , createVector(0, height)
-    // , createVector(width, height)
+    , createVector(width, 0),
+    , createVector(0, height)
+    , createVector(width, height)
   ].forEach(startPos => {
     drawTentacle(startRadius, startPos, mousePos, maxSpread);
   });
