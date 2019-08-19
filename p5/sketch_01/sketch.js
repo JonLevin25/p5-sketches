@@ -50,11 +50,11 @@ function draw() {
 const minRadius = 1;
 let per = 0;
 
-function drawTentacle(startRadius, startPos, endPos, steps){
+function drawTentacle(startRadius, startPos, endPos){
+  const maxSteps = 100;
   const distVector = V.sub(endPos, startPos);
   const totalDist = distVector.mag();
-  
-  function getPercent(currPos){
+  const getPercent = (currPos) => {
     let currVec = V.sub(currPos, startPos);
     let currDist = currVec.mag();
     return currDist / totalDist;
@@ -63,28 +63,30 @@ function drawTentacle(startRadius, startPos, endPos, steps){
   let offset = startPos;
   let radius = startRadius;
   let v = distVector.copy().normalize();
-  for (let i = 0; i < steps; i++){
+  for (let i = 0; i < maxSteps; i++){
+    
+    /* Draw logic */
     push();
+    
     translate(offset.x, offset.y);
-    // clog(`offset: (${offset.x},${offset.y}) radius: ${radius}`)
     ellipse(0, 0, radius);
 
     fill(0);
     text(parseInt(per) ,0, 0);
+
     pop();
 
-    // update offset
+    /* Update state */
     offset = V.add(offset, v.copy().mult(radius));
 
-    // update radius
     let percent =  getPercent(offset);
     if (percent > 1.0) break;
     
-    // linear falloff
-    // let scaleFactor = percent;
     let scaleFactor = 1 - percent;
-    per = scaleFactor * 100;
     radius = clamp(scaleFactor * startRadius, minRadius, startRadius);
+
+    /* Update debug vars */
+    per = scaleFactor * 100;
   }
 }
 
